@@ -7,9 +7,9 @@ import { AzureAD } from "react-aad-msal";
 import { authProvider } from "./authProvider";
 
 ReactDOM.render(
-  <AzureAD provider={authProvider}>
-    <App />
-  </AzureAD>,
+  // <AzureAD provider={authProvider}>
+  <App />,
+  // </AzureAD>,
   document.getElementById("root")
 );
 

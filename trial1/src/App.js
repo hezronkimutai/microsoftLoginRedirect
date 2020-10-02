@@ -6,5 +6,5 @@ export default (props) => {
     console.log(err, data);
   };
 
-  return <MicrosoftLogin clientId={"61b0548f-6fd0-4207-bc4d-f5b47d428324"} authCallback={authHandler} />;
+  return <MicrosoftLogin clientId={"aedb4633-5401-49e5-85a2-647c5311028e"} authCallback={authHandler} />;
 };

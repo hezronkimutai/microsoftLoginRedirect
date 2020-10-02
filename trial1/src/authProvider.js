@@ -5,7 +5,7 @@ import { MsalAuthProvider, LoginType } from "react-aad-msal";
 const config = {
   auth: {
     authority: "https://login.microsoftonline.com/common",
-    clientId: "CLIENTID",
+    clientId: "aedb4633-5401-49e5-85a2-647c5311028e",
     redirectUri: "http://localhost:3000/",
   },
   cache: {
@@ -19,6 +19,7 @@ const authenticationParameters = {
   scopes: [
     // "<property (i.e. user.read)>",
     // "https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>",
+    "https://peachitad.onmicrosoft.com/api/user_impersonation",
   ],
 };
 
