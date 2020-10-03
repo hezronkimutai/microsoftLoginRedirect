@@ -1,126 +1,84 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import AuthService from './services/auth.service';
-import GraphService from './services/graph.service';
+import React, { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { login as loginFn, logout, getToken } from "./services/auth.service";
+import { getUserInfo } from "./services/graph.service";
 
-class App extends Component {
-  constructor() {
-    super();
-    this.authService = new AuthService();
-    this.graphService = new GraphService();
-    this.state = {
-      user: null,
-      userInfo: null,
-      apiCallFailed: false,
-      loginFailed: false
-    };
-  }
-  componentWillMount() {}
+export default () => {
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
-  callAPI = () => {
-    this.setState({
-      apiCallFailed: false
-    });
-    this.authService.getToken().then(
-      token => {
-        this.graphService.getUserInfo(token).then(
-          data => {
-            this.setState({
-              userInfo: data
-            });
+  const [userInfo, setUserInfo] = useState(null);
+  const [apiCallFailed, setApiCallFailed] = useState(null);
+  const [loginFailed, setLoginFailed] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const callAPI = () => {
+    setApiCallFailed(false);
+    getToken().then(
+      (token) => {
+        getUserInfo(token).then(
+          (data) => {
+            setUserInfo(data);
           },
-          error => {
+          (error) => {
             console.error(error);
-            this.setState({
-              apiCallFailed: true
-            });
+            setApiCallFailed(true);
           }
         );
       },
-      error => {
+      (error) => {
         console.error(error);
-        this.setState({
-          apiCallFailed: true
-        });
+        setApiCallFailed(true);
       }
     );
   };
 
-  logout = () => {
-    this.authService.logout();
-  };
-
-  login = () => {
-    this.setState({
-      loginFailed: false
-    });
-    this.authService.login().then(
-      user => {
-        if (user) {
-          this.setState({
-            user: user
-          });
-        } else {
-          this.setState({
-            loginFailed: true
-          });
-        }
+  const login = () => {
+    setLoginFailed(false);
+    loginFn().then(
+      (user) => {
+        user ? setUser(user) : setLoginFailed(true);
       },
       () => {
-        this.setState({
-          loginFailed: true
-        });
+        setLoginFailed(true);
       }
     );
+    // getToken();
   };
 
-  render() {
-    let templates = [];
-    if (this.state.user) {
-      templates.push(
-        <div key="loggedIn">
-          <button onClick={this.callAPI} type="button">
-            Call Graph's /me API
-          </button>
-          <button onClick={this.logout} type="button">
-            Logout
-          </button>
-          <h3>Hello {this.state.user.name}</h3>
-        </div>
-      );
-    } else {
-      templates.push(
-        <div key="loggedIn">
-          <button onClick={this.login} type="button">
-            Login with Microsoft
-          </button>
-        </div>
-      );
-    }
-    if (this.state.userInfo) {
-      templates.push(
-        <pre key="userInfo">{JSON.stringify(this.state.userInfo, null, 4)}</pre>
-      );
-    }
-    if (this.state.loginFailed) {
-      templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
-    }
-    if (this.state.apiCallFailed) {
-      templates.push(
-        <strong key="apiCallFailed">Graph API call unsuccessful</strong>
-      );
-    }
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">React app with MSAL.js</h1>
-        </header>
-        {templates}
-      </div>
-    );
-  }
-}
+  let templates = [];
+  user && templates.push(<LoggedIn callAPI={callAPI} userName={user.name} />);
+  !user && templates.push(<LoggedOut login={login} />);
+  userInfo && templates.push(<pre key="userInfo">{JSON.stringify(userInfo, null, 4)}</pre>);
+  loginFailed && templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
+  apiCallFailed && templates.push(<strong key="apiCallFailed">Graph API call unsuccessful</strong>);
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <h1 className="App-title">React app with MSAL.js</h1>
+      </header>
+      {templates}
+    </div>
+  );
+};
 
-export default App;
+const LoggedIn = ({ userName, callAPI }) => (
+  <div key="loggedIn">
+    <button onClick={callAPI} type="button">
+      Call Graph's /me API
+    </button>
+    <button onClick={logout} type="button">
+      Logout
+    </button>
+    <h3>Hello {userName}</h3>
+  </div>
+);
+
+const LoggedOut = ({ login }) => (
+  <div key="loggedout">
+    <button onClick={login} type="button">
+      Login with Microsoft
+    </button>
+  </div>
+);
