@@ -5,8 +5,6 @@ import { login as loginFn, logout, getToken } from "./services/auth.service";
 import { getUserInfo } from "./services/graph.service";
 
 export default () => {
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
   const [userInfo, setUserInfo] = useState(null);
   const [apiCallFailed, setApiCallFailed] = useState(null);
   const [loginFailed, setLoginFailed] = useState(null);
@@ -35,15 +33,18 @@ export default () => {
 
   const login = () => {
     setLoginFailed(false);
-    loginFn().then(
-      (user) => {
-        user ? setUser(user) : setLoginFailed(true);
-      },
-      () => {
-        setLoginFailed(true);
-      }
-    );
-    // getToken();
+    loginFn();
+    // .then(
+    //   (user) => {
+    //     console.log("#############################", user);
+
+    //     user ? setUser(user) : setLoginFailed(true);
+    //   },
+    //   () => {
+    //     setLoginFailed(true);
+    //   }
+    // );
+    getToken();
   };
 
   let templates = [];

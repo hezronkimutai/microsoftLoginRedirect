@@ -1,54 +1,39 @@
 import * as Msal from "msal";
 
-let PROD_REDIRECT_URI = "http://localhost:3000/";
+let PROD_REDIRECT_URI = "http://localhost:4000/";
 let redirectUri = window.location.origin;
 if (window.location.hostname !== "127.0.0.1") {
   redirectUri = PROD_REDIRECT_URI;
 }
-const applicationConfig = {
-  clientID: "55fb1d72-47b2-43d4-a119-7feca390c4c8",
-  graphScopes: ["user.read"],
-};
-const app = new Msal.UserAgentApplication(
-  applicationConfig.clientID,
-  "",
-  () => {
-    // callback for login redirect
+
+const msalConfig = {
+  auth: {
+    clientId: "261d3e9d-08d5-462f-9982-930d3de1eaae",
+    redirectUri: "http://localhost:3000/",
   },
-  {
-    redirectUri,
-  }
-);
+  scopes: ["user.read", "mail.send"],
+};
 
+const app = new Msal.UserAgentApplication(msalConfig);
+let username = "";
+app.handleRedirectCallback((error, response) => {
+  // handle redirect response or error
+  console.log("DDDDDDDDDDDDDDDDDD", response);
+});
 export const login = () => {
-  return app.loginPopup(applicationConfig.graphScopes).then(
-    (idToken) => {
-      const user = app.getUser();
-      console.log(user, "###########################################", idToken);
-
-      if (user) {
-        return user;
-      } else {
-        return null;
-      }
-    },
-    () => {
-      return null;
-    }
-  );
+  return app.loginRedirect(msalConfig.scopes);
 };
 export const logout = () => {
   app.logout();
 };
 export const getToken = () => {
-  return app.acquireTokenSilent(applicationConfig.graphScopes).then(
+  return app.acquireTokenSilent(msalConfig).then(
     (accessToken) => {
       console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", accessToken);
-
       return accessToken;
     },
     (error) => {
-      return app.acquireTokenPopup(applicationConfig.graphScopes).then(
+      return app.acquireTokenPopup(msalConfig).then(
         (accessToken) => {
           return accessToken;
         },
