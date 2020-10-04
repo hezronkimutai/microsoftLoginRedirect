@@ -14,12 +14,9 @@ const msalConfig = {
   scopes: ["user.read", "mail.send"],
 };
 
-const app = new Msal.UserAgentApplication(msalConfig);
+export const app = new Msal.UserAgentApplication(msalConfig);
 let username = "";
-app.handleRedirectCallback((error, response) => {
-  // handle redirect response or error
-  console.log("DDDDDDDDDDDDDDDDDD", response);
-});
+
 export const login = () => {
   return app.loginRedirect(msalConfig.scopes);
 };

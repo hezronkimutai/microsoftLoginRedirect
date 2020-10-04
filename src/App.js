@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { login as loginFn, logout, getToken } from "./services/auth.service";
+import { login as loginFn, app, logout, getToken } from "./services/auth.service";
 import { getUserInfo } from "./services/graph.service";
 
 export default () => {
@@ -34,19 +34,15 @@ export default () => {
   const login = () => {
     setLoginFailed(false);
     loginFn();
-    // .then(
-    //   (user) => {
-    //     console.log("#############################", user);
-
-    //     user ? setUser(user) : setLoginFailed(true);
-    //   },
-    //   () => {
-    //     setLoginFailed(true);
-    //   }
-    // );
     getToken();
   };
-
+  useEffect(() => {
+    app.handleRedirectCallback((error, response) => {
+      // handle redirect response or error
+      console.log("DDDDDDDDDDDDDDDDDD", response);
+      setUser(response);
+    });
+  }, []);
   let templates = [];
   user && templates.push(<LoggedIn callAPI={callAPI} userName={user.name} />);
   !user && templates.push(<LoggedOut login={login} />);
