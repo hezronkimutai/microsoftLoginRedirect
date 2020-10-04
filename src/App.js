@@ -49,8 +49,6 @@ export default () => {
   loginFailed && templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
   apiCallFailed && templates.push(<strong key="apiCallFailed">Graph API call unsuccessful</strong>);
 
-  console.log("#######################################");
-
   return <div className="App">{templates}</div>;
 };
 
