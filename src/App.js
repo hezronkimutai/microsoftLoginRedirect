@@ -54,9 +54,9 @@ export default () => {
 
 const LoggedIn = ({ userName, callAPI }) => (
   <div>
-    <button onClick={callAPI} type="button">
+    {/* <button onClick={callAPI} type="button">
       Call Graph's /me API
-    </button>
+    </button> */}
     <button onClick={logout} type="button">
       Logout
     </button>
