@@ -1,10 +1,13 @@
 import * as Msal from "msal";
-// https://microsoft-login-redirect.herokuapp.com/
+
+const localhosts = ["127.0.0.1", "http://localhost:3000/"];
+
 const msalConfig = {
   auth: {
     clientId: "261d3e9d-08d5-462f-9982-930d3de1eaae",
-    redirectUri:
-      window.location.hostname === "127.0.0.1" ? "http://localhost:3000/" : "https://m-login-redirect.herokuapp.com/",
+    redirectUri: localhosts.includes(window.location.hostname)
+      ? "http://localhost:3000/"
+      : "https://ms-login-api.herokuapp.com/",
   },
   scopes: ["user.read", "mail.send"],
   cache: {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { login as loginFn, app, logout, getToken } from "./services/auth.service";
 import { getUserInfo } from "./services/graph.service";
-
+import microsoftIcon from "./microsoft.png";
 export default () => {
   const [userInfo, setUserInfo] = useState(null);
   const [apiCallFailed, setApiCallFailed] = useState(null);
@@ -65,9 +65,10 @@ const LoggedIn = ({ userName, callAPI }) => (
 );
 
 const LoggedOut = ({ login }) => (
-  <div>
-    <button onClick={login} type="button">
-      Login with Microsoft
+  <div style={{ padding: "40px" }}>
+    <button style={{ display: "flex", margin: "auto" }} onClick={login} type="button">
+      <img alt="microsoft icon" style={{ height: 30, padding: "3px 5px", width: 30 }} src={microsoftIcon} />
+      <div style={{ margin: "auto", padding: "3px 5px" }}>Login with Microsoft</div>
     </button>
   </div>
 );
