@@ -3,11 +3,18 @@ import "./App.css";
 import { login as loginFn, app, logout } from "./services/auth.service";
 import microsoftIcon from "./microsoft.png";
 import axios from "axios";
+
+const localhosts = ["127.0.0.1", "localhost"];
+
+export const apicallUri = localhosts.includes(window.location.hostname)
+  ? "http://localhost:3001/api/auth"
+  : "https://ms-login-api.herokuapp.com/api/auth";
+
 const callLoginApi = async (idToken, signInData, type, setToken) => {
   try {
     return await axios({
       method: "post",
-      url: "http://localhost:3001/api/auth",
+      url: apicallUri,
       headers: { Authorization: idToken },
       data: { type, ...signInData },
     });
