@@ -8,6 +8,7 @@
     "msal": "^1.4.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "1.0.17"
   },
   "scripts": {
