@@ -1,62 +1,22 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { login as loginFn, app, logout, getToken } from "./services/auth.service";
-import { getUserInfo } from "./services/graph.service";
+import { login as loginFn, app, logout } from "./services/auth.service";
 import microsoftIcon from "./microsoft.png";
-export default () => {
-  const [userInfo, setUserInfo] = useState(null);
-  const [apiCallFailed, setApiCallFailed] = useState(null);
-  const [loginFailed, setLoginFailed] = useState(null);
-  const [user, setUser] = useState(null);
-
-  const callAPI = () => {
-    setApiCallFailed(false);
-    getToken().then(
-      (token) => {
-        getUserInfo(token).then(
-          (data) => {
-            setUserInfo(data);
-          },
-          (error) => {
-            console.error(error);
-            setApiCallFailed(true);
-          }
-        );
-      },
-      (error) => {
-        console.error(error);
-        setApiCallFailed(true);
-      }
-    );
-  };
-
-  const login = () => {
-    setLoginFailed(false);
-    loginFn();
-    // getToken();
-  };
-  useEffect(() => {
-    app.handleRedirectCallback((error, response) => {
-      if (error) setLoginFailed(error);
-      if (response) setUser(response);
+import axios from "axios";
+const callLoginApi = async (idToken, signInData, type, setToken) => {
+  try {
+    return await axios({
+      method: "post",
+      url: "http://localhost:3001/api/auth",
+      headers: { Authorization: idToken },
+      data: { type, ...signInData },
     });
-  }, []);
-  let templates = [];
-  localStorage.getItem("msal.idtoken") &&
-    templates.push(<LoggedIn key="loggedIn" callAPI={callAPI} userName={user && user.account.name} />);
-  !localStorage.getItem("msal.idtoken") && templates.push(<LoggedOut key="loggedout" login={login} />);
-  userInfo && templates.push(<pre key="userInfo">{JSON.stringify(userInfo, null, 4)}</pre>);
-  loginFailed && templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
-  apiCallFailed && templates.push(<strong key="apiCallFailed">Graph API call unsuccessful</strong>);
-
-  return <div className="App">{templates}</div>;
+  } catch (error) {
+    return error;
+  }
 };
-
-const LoggedIn = ({ userName, callAPI }) => (
+const LoggedIn = ({ userName }) => (
   <div>
-    {/* <button onClick={callAPI} type="button">
-      Call Graph's /me API
-    </button> */}
     <button onClick={logout} type="button">
       Logout
     </button>
@@ -64,13 +24,67 @@ const LoggedIn = ({ userName, callAPI }) => (
   </div>
 );
 
-const LoggedOut = ({ login }) => (
-  <div style={{ padding: "40px" }}>
-    <button style={{ display: "flex", margin: "auto" }} onClick={login} type="button">
-      <img alt="microsoft icon" style={{ height: 30, padding: "3px 5px", width: 30 }} src={microsoftIcon} />
-      <div style={{ margin: "auto", padding: "3px 5px" }}>Login with Microsoft</div>
-    </button>
-  </div>
-);
+const LoggedOut = ({ setToken, login, handleChange, signInData }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    callLoginApi(null, signInData, "local", setToken);
+  };
+  return (
+    <div style={{ padding: "40px" }}>
+      <h1>Login</h1>
+      <form className="flex m-1 flex-col" onSubmit={handleSubmit}>
+        <input name="email" onChange={handleChange} className="m-2 mx-auto w-64" type="text" />
+        <input name="password" onChange={handleChange} className="my-2 mx-auto w-64" type="password" />
+        <button className="m-auto border-gray-500  w-40  rounded border">login</button>
+      </form>
+      OR
+      <button className="border-gray-500 flex m-auto w-48 rounded border" onClick={login} type="button">
+        <img alt="microsoft icon" className="w-6 h-6 m-1" src={microsoftIcon} />
+        <div className="m-auto">Login with Microsoft</div>
+      </button>
+    </div>
+  );
+};
 
-// https://www.youtube.com/watch?v=vlpwGQiDhP8
+export default () => {
+  const [loginFailed, setLoginFailed] = useState(null);
+  const [user, setUser] = useState(null);
+  const [signInData, setSigninData] = useState({});
+  const [token, setToken] = useState(null);
+
+  const login = async () => {
+    setLoginFailed(false);
+    await loginFn();
+  };
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+    setSigninData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  useEffect(() => {
+    app.handleRedirectCallback(async (error, response) => {
+      if (error) setLoginFailed(error);
+      if (!(response && response.accessToken)) {
+        setUser(response);
+        response && (await callLoginApi(response.idToken.rawIdToken, {}, "microsoft", setToken));
+      }
+    });
+  }, []);
+  let templates = [];
+  localStorage.getItem("msal.idtoken") &&
+    templates.push(<LoggedIn key="loggedIn" userName={user && user.account.name} />);
+  !localStorage.getItem("msal.idtoken") &&
+    templates.push(
+      <LoggedOut
+        setToken={setToken}
+        signInData={signInData}
+        handleChange={handleChange}
+        key="loggedout"
+        login={login}
+      />
+    );
+  loginFailed && templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
+  console.log(token);
+
+  return <div className="App">{templates}</div>;
+};

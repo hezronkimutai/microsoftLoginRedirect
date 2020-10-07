@@ -1,6 +1,6 @@
 import * as Msal from "msal";
 
-const localhosts = ["127.0.0.1", "http://localhost:3000/"];
+const localhosts = ["127.0.0.1", "localhost"];
 
 const msalConfig = {
   auth: {
@@ -9,7 +9,7 @@ const msalConfig = {
       ? "http://localhost:3000/"
       : "https://ms-login-api.herokuapp.com/",
   },
-  scopes: ["user.read", "mail.send"],
+  scopes: ["user.read"],
   cache: {
     cacheLocation: "localStorage",
     storeAuthStateInCookie: false,
@@ -18,26 +18,16 @@ const msalConfig = {
 
 export const app = new Msal.UserAgentApplication(msalConfig);
 
-export const login = () => {
-  return app.loginRedirect(msalConfig.scopes);
+export const login = async () => {
+  return await app.loginRedirect(msalConfig.scopes);
 };
 export const logout = () => {
   app.logout();
 };
-export const getToken = () => {
-  return app.acquireTokenSilent(msalConfig).then(
-    (accessToken) => {
-      return accessToken;
-    },
-    (error) => {
-      return app.acquireTokenPopup(msalConfig).then(
-        (accessToken) => {
-          return accessToken;
-        },
-        (err) => {
-          console.error(err);
-        }
-      );
-    }
-  );
+export const getToken = async () => {
+  try {
+    return await app.acquireTokenRedirect(msalConfig);
+  } catch (error) {
+    console.log(error);
+  }
 };
