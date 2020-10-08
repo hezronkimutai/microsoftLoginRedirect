@@ -89,7 +89,6 @@ export default () => {
       />
     );
   loginFailed && templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
-  console.log(token);
 
   return <div className="App">{templates}</div>;
 };

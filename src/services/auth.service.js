@@ -29,6 +29,6 @@ export const getToken = async () => {
   try {
     return await app.acquireTokenRedirect(msalConfig);
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };

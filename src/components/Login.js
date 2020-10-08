@@ -5,12 +5,12 @@ import { onChange, onSubmit, callAPi } from "../utils";
 import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
 
-export default () => {
+export default ({ history }) => {
   const [loginFailed, setLoginFailed] = useState(null);
   const [user, setUser] = useState(null);
   const [signInData, setSigninData] = useState({});
   const [token, setToken] = useState(null);
-
+  console.log(user);
   const login = async () => {
     setLoginFailed(false);
     await loginFn();
@@ -19,7 +19,7 @@ export default () => {
     onChange(e, setSigninData);
   };
   const handleSubmit = (e) => {
-    onSubmit(e, () => callAPi({ data: signInData, type: "local", uri: "/api/auth/signin" }));
+    onSubmit(e, () => callAPi({ data: signInData, type: "local", uri: "/api/auth/signin" }, setToken));
   };
   useEffect(() => {
     app.handleRedirectCallback(async (error, response) => {
@@ -27,16 +27,21 @@ export default () => {
       if (!(response && response.accessToken)) {
         setUser(response);
         response &&
-          (await callAPi({
-            idToken: response.idToken.rawIdToken,
-            data: {},
-            type: "microsoft",
-            uri: "/api/auth/signin",
-          }));
+          (await callAPi(
+            {
+              idToken: response.idToken.rawIdToken,
+              data: {},
+              type: "microsoft",
+              uri: "/api/auth/signin",
+            },
+            setToken
+          ));
       }
     });
   }, []);
-  console.log(token, user);
+  useEffect(() => {
+    localStorage.getItem("token") && history.push("/dashboard");
+  }, [token]);
   const inptFlds = inputFields(handleChange, ["email", "password"]);
   return (
     <div className="text-center p-20">
@@ -57,8 +62,8 @@ export default () => {
             key={field.name}
           />
         ))}
-        <button type="submit" className="m-auto my-1 border-gray-500  w-40  rounded border">
-          Signup
+        <button type="submit" className="m-auto my-1 border-gray-500  w-40 rounded border">
+          Signin
         </button>
         OR
         <button className="border-gray-500 flex m-auto w-48 rounded border" onClick={login} type="button">

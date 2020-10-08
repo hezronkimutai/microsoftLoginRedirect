@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
 import { onChange, onSubmit, callAPi } from "../utils";
 
-export default () => {
+export default ({ history }) => {
   const [signupData, setSignupData] = useState({});
   const handleChange = (e) => {
     onChange(e, setSignupData);
@@ -12,6 +12,9 @@ export default () => {
   const handleSubmit = (e) => {
     onSubmit(e, () => callAPi({ data: signupData, type: "local", uri: "/api/auth/signup" }));
   };
+  useEffect(() => {
+    localStorage.getItem("token") && history.push("/dashboard");
+  }, []);
   return (
     <div className="text-center p-20">
       <form
