@@ -32,3 +32,19 @@ export const getToken = async () => {
     return error;
   }
 };
+// app.handleRedirectCallback(async (error, response) => {
+//   if (error) setLoginFailed(error);
+//   if (!(response && response.accessToken)) {
+//     setUser(response);
+//     response &&
+//       (await callAPi(
+//         {
+//           idToken: response.idToken.rawIdToken,
+//           data: {},
+//           type: "microsoft",
+//           uri: "/api/auth/signin",
+//         },
+//         setToken
+//       ));
+//   }
+// });

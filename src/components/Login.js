@@ -5,7 +5,7 @@ import { onChange, onSubmit, callAPi } from "../utils";
 import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
 
-export default ({ history }) => {
+export default ({ history, setLoggedOut, loggedOut }) => {
   const [loginFailed, setLoginFailed] = useState(null);
   const [user, setUser] = useState(null);
   const [signInData, setSigninData] = useState({});
@@ -22,29 +22,31 @@ export default ({ history }) => {
     onSubmit(e, () => callAPi({ data: signInData, type: "local", uri: "/api/auth/signin" }, setToken));
   };
   useEffect(() => {
-    app.handleRedirectCallback(async (error, response) => {
-      if (error) setLoginFailed(error);
-      if (!(response && response.accessToken)) {
-        setUser(response);
-        response &&
-          (await callAPi(
-            {
-              idToken: response.idToken.rawIdToken,
-              data: {},
-              type: "microsoft",
-              uri: "/api/auth/signin",
-            },
-            setToken
-          ));
-      }
-    });
+    loggedOut &&
+      app.handleRedirectCallback(async (error, response) => {
+        if (error) setLoginFailed(error);
+        if (!(response && response.accessToken)) {
+          setUser(response);
+          response &&
+            (await callAPi(
+              {
+                idToken: response.idToken.rawIdToken,
+                data: {},
+                type: "microsoft",
+                uri: "/api/auth/signin",
+              },
+              setToken
+            ));
+        }
+      });
+    setLoggedOut(true);
   }, []);
   useEffect(() => {
     localStorage.getItem("token") && history.push("/dashboard");
   }, [token]);
   const inptFlds = inputFields(handleChange, ["email", "password"]);
   return (
-    <div className="text-center p-20">
+    <div className="text-center px-0 py-20">
       <form
         onSubmit={handleSubmit}
         style={{ width: "min-content" }}

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
 import { onChange, onSubmit, callAPi } from "../utils";
 
-export default ({ history }) => {
+export default ({ history, setLoggedOut }) => {
   const [signupData, setSignupData] = useState({});
   const handleChange = (e) => {
     onChange(e, setSignupData);
@@ -13,10 +13,11 @@ export default ({ history }) => {
     onSubmit(e, () => callAPi({ data: signupData, type: "local", uri: "/api/auth/signup" }));
   };
   useEffect(() => {
+    setLoggedOut(true);
     localStorage.getItem("token") && history.push("/dashboard");
   }, []);
   return (
-    <div className="text-center p-20">
+    <div className="text-center py-20 px-0">
       <form
         onSubmit={handleSubmit}
         style={{ width: "min-content" }}

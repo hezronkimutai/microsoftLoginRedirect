@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-
-export default ({ history }) => {
+export default ({ history, setLoggedOut }) => {
   useEffect(() => {
+    setLoggedOut(true);
     !localStorage.getItem("token") && history.push("/");
   }, []);
   return (
@@ -10,6 +10,7 @@ export default ({ history }) => {
       <button
         onClick={() => {
           localStorage.clear();
+          setLoggedOut(false);
           history.push("/");
         }}
         type="submit"
