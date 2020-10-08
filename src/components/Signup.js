@@ -5,17 +5,18 @@ import { onChange, onSubmit, callAPi } from "../utils";
 
 export default ({ history, setLoggedOut }) => {
   const [signupData, setSignupData] = useState({});
+  const [token, setToken] = useState(null);
   const handleChange = (e) => {
     onChange(e, setSignupData);
   };
   const inptFlds = inputFields(handleChange, ["name", "email", "password"]);
   const handleSubmit = (e) => {
-    onSubmit(e, () => callAPi({ data: signupData, type: "local", uri: "/api/auth/signup" }));
+    onSubmit(e, () => callAPi({ data: signupData, type: "local", uri: "/api/auth/signup" }, setToken));
   };
   useEffect(() => {
     setLoggedOut(true);
     localStorage.getItem("token") && history.push("/dashboard");
-  }, []);
+  }, [token]);
   return (
     <div className="text-center py-20 px-0">
       <form

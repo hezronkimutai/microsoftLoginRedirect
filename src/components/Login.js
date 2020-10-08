@@ -39,7 +39,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
             ));
         }
       });
-    setLoggedOut(true);
+    setLoggedOut(false);
   }, []);
   useEffect(() => {
     localStorage.getItem("token") && history.push("/dashboard");

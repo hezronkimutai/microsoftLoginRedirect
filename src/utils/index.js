@@ -20,7 +20,8 @@ const callAPi = async (reqObj, setToken) => {
     toast.success(res.data.message);
     return res;
   } catch (error) {
-    toast.error("Login failed");
+    console.log(error);
+    toast.error("failed");
     return error;
   }
 };
