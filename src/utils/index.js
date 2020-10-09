@@ -44,4 +44,20 @@ const verifyToken = (token) => {
     return false;
   }
 };
-export { onChange, callAPi, onSubmit, verifyToken };
+const hdCb = async (error, response, setUser, setLoginFailed, setToken) => {
+  if (error) setLoginFailed(error);
+  if (!(response && response.accessToken)) {
+    setUser(response);
+    response &&
+      (await callAPi(
+        {
+          idToken: response.idToken.rawIdToken,
+          data: {},
+          type: "microsoft",
+          uri: "/api/auth/signin",
+        },
+        setToken
+      ));
+  }
+};
+export { onChange, callAPi, onSubmit, hdCb, verifyToken };

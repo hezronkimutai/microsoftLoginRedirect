@@ -26,6 +26,7 @@ export const login = async () => {
 export const logout = () => {
   app.logout();
 };
+// logout();
 export const getToken = async () => {
   try {
     return await app.acquireTokenRedirect(msalConfig);

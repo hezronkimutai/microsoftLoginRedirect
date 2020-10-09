@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { login as loginFn, app } from "../services/auth.service";
 import microsoftIcon from "../microsoft.png";
-import { onChange, onSubmit, callAPi, verifyToken } from "../utils";
+import { onChange, onSubmit, callAPi, verifyToken, hdCb } from "../utils";
 import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
 
@@ -10,6 +10,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
   const [user, setUser] = useState(null);
   const [signInData, setSigninData] = useState({});
   const [token, setToken] = useState(null);
+  console.log(user);
   const login = async () => {
     setLoginFailed(false);
     await loginFn();
@@ -22,23 +23,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
   };
   useEffect(() => {
     loggedOut &&
-      app.handleRedirectCallback(async (error, response) => {
-        if (error) setLoginFailed(error);
-        if (!(response && response.accessToken)) {
-          setUser(response);
-
-          response &&
-            (await callAPi(
-              {
-                idToken: response.idToken.rawIdToken,
-                data: {},
-                type: "microsoft",
-                uri: "/api/auth/signin",
-              },
-              setToken
-            ));
-        }
-      });
+      app.handleRedirectCallback((error, response) => hdCb(error, response, setUser, setLoginFailed, setToken));
     setLoggedOut(false);
   }, []);
   useEffect(() => {
