@@ -1,13 +1,14 @@
 import * as Msal from "msal";
 
+const { REACT_APP_MS_AZURE_CLIENT_ID, REACT_APP_PROD_REDIRECT_URI, REACT_APP_LOCAL_REDIRECT_URI } = process.env;
 const localhosts = ["127.0.0.1", "localhost"];
 const redirectUri = localhosts.includes(window.location.hostname)
-  ? "http://localhost:3000/"
-  : "https://m-login-redirect.herokuapp.com/";
+  ? REACT_APP_LOCAL_REDIRECT_URI
+  : REACT_APP_PROD_REDIRECT_URI;
 
 const msalConfig = {
   auth: {
-    clientId: "261d3e9d-08d5-462f-9982-930d3de1eaae",
+    clientId: REACT_APP_MS_AZURE_CLIENT_ID,
     redirectUri,
   },
   scopes: ["user.read"],

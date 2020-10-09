@@ -5,6 +5,7 @@
   "homepage": "https://sunilbandla.github.io/react-msal-sample/",
   "dependencies": {
     "axios": "^0.20.0",
+    "jsonwebtoken": "^8.5.1",
     "msal": "^1.4.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",

@@ -22,7 +22,7 @@ export default ({ history, setLoggedOut }) => {
       <form
         onSubmit={handleSubmit}
         style={{ width: "min-content" }}
-        className="flex p-4 m-auto rounded border m-1 flex-col"
+        className="flex p-4 m-auto shadow rounded border m-1 flex-col"
       >
         <h1>Signup</h1>
         {inptFlds.map((field) => (
@@ -38,7 +38,7 @@ export default ({ history, setLoggedOut }) => {
         <button type="submit" className="m-auto my-1 border-gray-500  w-40  rounded border">
           Signup
         </button>
-        <span>
+        <span className="my-1">
           Already have an account?
           <NavLink className="text-blue-900 mx-1" to="/">
             Signin

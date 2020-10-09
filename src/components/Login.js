@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { login as loginFn, app } from "../services/auth.service";
 import microsoftIcon from "../microsoft.png";
-import { onChange, onSubmit, callAPi } from "../utils";
+import { onChange, onSubmit, callAPi, verifyToken } from "../utils";
 import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
 
@@ -42,7 +42,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
     setLoggedOut(false);
   }, []);
   useEffect(() => {
-    localStorage.getItem("token") && history.push("/dashboard");
+    verifyToken(localStorage.getItem("token")) && history.push("/dashboard");
   }, [token]);
   const inptFlds = inputFields(handleChange, ["email", "password"]);
   return (
@@ -50,7 +50,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
       <form
         onSubmit={handleSubmit}
         style={{ width: "min-content" }}
-        className="flex p-4 m-auto rounded border m-1 flex-col"
+        className="flex shadow p-4 m-auto rounded border m-1 flex-col"
       >
         <h1>Login</h1>
         {loginFailed && <span>Login Unsucesful</span>}
@@ -72,7 +72,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
           <img alt="microsoft icon" className="w-6 h-6 m-1" src={microsoftIcon} />
           <div className="m-auto">Login with Microsoft</div>
         </button>
-        <span>
+        <span className="my-1">
           Don't have an account?
           <NavLink className="text-blue-900 mx-1" to="/signup">
             signup

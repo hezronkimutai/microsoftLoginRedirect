@@ -1,6 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import jwt from "jsonwebtoken";
 
+const { REACT_APP_SECRET_KEY } = process.env;
 const localhosts = ["127.0.0.1", "localhost"];
 
 export const apicallUri = localhosts.includes(window.location.hostname)
@@ -34,4 +36,10 @@ const onSubmit = (e, fn) => {
   e.preventDefault();
   fn();
 };
-export { onChange, callAPi, onSubmit };
+const verifyToken = (token) => {
+  jwt.verify(token, REACT_APP_SECRET_KEY, (err, decoded) => {
+    if (err) return false;
+    return decoded;
+  });
+};
+export { onChange, callAPi, onSubmit, verifyToken };
