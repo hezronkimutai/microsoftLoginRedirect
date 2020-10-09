@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
+import { verifyToken } from "../utils";
 export default ({ history, setLoggedOut }) => {
   useEffect(() => {
     setLoggedOut(true);
-    !localStorage.getItem("token") && history.push("/");
+    !verifyToken(localStorage.getItem("token")) && history.push("/dashboard");
   }, []);
   return (
     <div className="text-center p-20 flex flex-col">

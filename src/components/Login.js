@@ -10,7 +10,6 @@ export default ({ history, setLoggedOut, loggedOut }) => {
   const [user, setUser] = useState(null);
   const [signInData, setSigninData] = useState({});
   const [token, setToken] = useState(null);
-  console.log(user);
   const login = async () => {
     setLoginFailed(false);
     await loginFn();
@@ -27,6 +26,7 @@ export default ({ history, setLoggedOut, loggedOut }) => {
         if (error) setLoginFailed(error);
         if (!(response && response.accessToken)) {
           setUser(response);
+
           response &&
             (await callAPi(
               {

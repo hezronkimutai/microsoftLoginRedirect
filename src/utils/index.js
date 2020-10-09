@@ -37,9 +37,11 @@ const onSubmit = (e, fn) => {
   fn();
 };
 const verifyToken = (token) => {
-  jwt.verify(token, REACT_APP_SECRET_KEY, (err, decoded) => {
-    if (err) return false;
-    return decoded;
-  });
+  try {
+    return jwt.verify(token, REACT_APP_SECRET_KEY);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 };
 export { onChange, callAPi, onSubmit, verifyToken };

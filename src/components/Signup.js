@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import inputFields from "../utils/inputFields";
-import { onChange, onSubmit, callAPi } from "../utils";
+import { onChange, onSubmit, callAPi, verifyToken } from "../utils";
 
 export default ({ history, setLoggedOut }) => {
   const [signupData, setSignupData] = useState({});
@@ -15,7 +15,7 @@ export default ({ history, setLoggedOut }) => {
   };
   useEffect(() => {
     setLoggedOut(true);
-    localStorage.getItem("token") && history.push("/dashboard");
+    verifyToken(localStorage.getItem("token")) && history.push("/dashboard");
   }, [token]);
   return (
     <div className="text-center py-20 px-0">
